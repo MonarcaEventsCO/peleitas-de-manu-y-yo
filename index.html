@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Juego de Peleas</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+      background: linear-gradient(to bottom, #87CEEB, #228B22);
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas"></canvas>
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // Personajes
+    const manuela = {
+      x: 100,
+      y: canvas.height - 150,
+      width: 50,
+      height: 100,
+      color: 'red',
+      dx: 0,
+      dy: 0,
+      isAttacking: false
+    };
+
+    const diego = {
+      x: canvas.width - 150,
+      y: canvas.height - 150,
+      width: 50,
+      height: 100,
+      color: 'blue',
+      dx: 0,
+      dy: 0,
+      isAttacking: false
+    };
+
+    const gravity = 2;
+
+    // Dibujar personaje
+    function drawCharacter(character) {
+      ctx.fillStyle = character.color;
+      ctx.fillRect(character.x, character.y, character.width, character.height);
+    }
+
+    // Actualizar posición
+    function updateCharacter(character) {
+      character.y += character.dy;
+      character.x += character.dx;
+
+      // Gravedad
+      if (character.y + character.height < canvas.height) {
+        character.dy += gravity;
+      } else {
+        character.dy = 0;
+      }
+
+      // Limitar al canvas
+      if (character.x < 0) character.x = 0;
+      if (character.x + character.width > canvas.width) character.x = canvas.width - character.width;
+    }
+
+    // Dibujar escenario y personajes
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Dibujar personajes
+      drawCharacter(manuela);
+      drawCharacter(diego);
+    }
+
+    // Actualizar el juego
+    function update() {
+      updateCharacter(manuela);
+      updateCharacter(diego);
+    }
+
+    // Bucle principal del juego
+    function gameLoop() {
+      draw();
+      update();
+      requestAnimationFrame(gameLoop);
+    }
+
+    // Controles
+    window.addEventListener('keydown', (e) => {
+      switch (e.key) {
+        case 'a':
+          manuela.dx = -5;
+          break;
+        case 'd':
+          manuela.dx = 5;
+          break;
+        case 'w':
+          if (manuela.dy === 0) manuela.dy = -20;
+          break;
+        case 'q':
+          manuela.isAttacking = true;
+          break;
+        case 'ArrowLeft':
+          diego.dx = -5;
+          break;
+        case 'ArrowRight':
+          diego.dx = 5;
+          break;
+        case 'ArrowUp':
+          if (diego.dy === 0) diego.dy = -20;
+          break;
+        case 'o':
+          diego.isAttacking = true;
+          break;
+      }
+    });
+
+    window.addEventListener('keyup', (e) => {
+      switch (e.key) {
+        case 'a':
+        case 'd':
+          manuela.dx = 0;
+          break;
+        case 'q':
+          manuela.isAttacking = false;
+          break;
+        case 'ArrowLeft':
+        case 'ArrowRight':
+          diego.dx = 0;
+          break;
+        case 'o':
+          diego.isAttacking = false;
+          break;
+      }
+    });
+
+    gameLoop();
+  </script>
+</body>
+</html>
