@@ -25,16 +25,20 @@
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
+    // Cargar imagen de Hello Kitty
+    const helloKittyImg = new Image();
+    helloKittyImg.src = 'https://upload.wikimedia.org/wikipedia/en/5/5b/Hello_Kitty_character_portrait.png';
+
     // Personajes
     const manuela = {
       x: 100,
       y: canvas.height - 150,
       width: 50,
       height: 100,
-      color: 'red',
       dx: 0,
       dy: 0,
-      isAttacking: false
+      isAttacking: false,
+      image: helloKittyImg
     };
 
     const diego = {
@@ -52,8 +56,12 @@
 
     // Dibujar personaje
     function drawCharacter(character) {
-      ctx.fillStyle = character.color;
-      ctx.fillRect(character.x, character.y, character.width, character.height);
+      if (character.image) {
+        ctx.drawImage(character.image, character.x, character.y, character.width, character.height);
+      } else {
+        ctx.fillStyle = character.color;
+        ctx.fillRect(character.x, character.y, character.width, character.height);
+      }
     }
 
     // Actualizar posición
@@ -144,7 +152,9 @@
       }
     });
 
-    gameLoop();
+    helloKittyImg.onload = () => {
+      gameLoop();
+    };
   </script>
 </body>
 </html>
